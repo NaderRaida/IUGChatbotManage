@@ -110,6 +110,7 @@ public class HomeFragment extends Fragment {
             questionsList.add(question);
             while(line != null){
                 Log.d("Full Line", line);
+                
                 line = reader.readLine();
                 if(line != null){
                     if (line.startsWith("س:")){
