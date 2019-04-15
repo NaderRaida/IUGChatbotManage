@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginStart="5dp"
+    tools:context=".HomeFragment"
+    android:layout_marginLeft="5dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="work with :"
+        android:id="@+id/tv_1"
+        android:textSize="15sp"
+        android:layout_margin="8dp"
+        />
+    <Spinner
+        android:layout_toEndOf="@id/tv_1"
+        android:id="@+id/spinner"
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_1" />
+    <TextView
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name :"
+        android:textSize="15sp"
+        android:id="@+id/label_name"
+        android:layout_below="@id/spinner"
+
+        />
+    <EditText
+        android:maxLines="1"
+        android:layout_alignBaseline="@id/label_name"
+        android:layout_toEndOf="@id/label_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/name_et"
+        android:hint="Enter The name of Intent"
+
+        android:layout_toRightOf="@id/label_name" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/label_example"
+        android:text="Example :"
+        android:layout_below="@id/label_name"
+        android:layout_marginTop="30dp"
+        android:textSize="15sp"
+
+        />
+    <EditText
+        android:maxLines="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/label_example"
+        android:id="@+id/example_et"
+        android:hint="Enter intent example (Add to list)"
+        android:layout_alignBaseline="@id/label_example"
+
+        android:layout_toRightOf="@id/label_example" />
+    ///////////////////////////////////
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/label_description"
+        android:text="Description :"
+        android:layout_below="@id/label_example"
+        android:layout_marginTop="30dp"
+        android:textSize="15sp"
+
+        />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/label_description"
+        android:id="@+id/description_et"
+        android:hint="Enter intent Description"
+        android:layout_alignBaseline="@id/label_description"
+
+        android:layout_toRightOf="@id/label_description" />
+
+    //////////////////////////////////
+    <TextView
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name :"
+        android:textSize="15sp"
+        android:id="@+id/label_name1"
+        android:layout_below="@id/spinner"
+
+        />
+    <EditText
+        android:maxLines="1"
+        android:layout_alignBaseline="@id/label_name1"
+        android:layout_toEndOf="@id/label_name1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/name_et1"
+        android:hint="Enter The name of Node"
+
+        android:layout_toRightOf="@id/label_name1" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/label_condition"
+        android:text="Condition :"
+        android:layout_below="@id/label_name1"
+        android:layout_marginTop="30dp"
+        android:textSize="15sp"
+
+        />
+    <EditText
+        android:maxLines="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/label_condition"
+        android:id="@+id/condition_et"
+        android:hint="Enter the condition of node"
+        android:layout_alignBaseline="@id/label_condition"
+
+        android:layout_toRightOf="@id/label_condition" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/label_title"
+        android:text="Title :"
+        android:layout_below="@id/label_condition"
+        android:layout_marginTop="30dp"
+        android:textSize="15sp"
+
+        />
+    <EditText
+        android:maxLines="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/label_title"
+        android:id="@+id/title_et"
+        android:hint="Enter the title of node"
+        android:layout_alignBaseline="@id/label_title"
+
+        android:layout_toRightOf="@id/label_title" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/label_output"
+        android:text="Output :"
+        android:layout_below="@id/label_title"
+        android:layout_marginTop="30dp"
+        android:textSize="15sp"
+
+        />
+    <EditText
+        android:maxLines="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/label_output"
+        android:id="@+id/output_et"
+        android:hint="Enter the output of node"
+        android:layout_alignBaseline="@id/label_output"
+
+        android:layout_toRightOf="@id/label_output" />
+
+
+    <LinearLayout
+
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linearButtons"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="5dp">
+        <Button
+            android:id="@+id/addToListBtn"
+            android:text="Add to List"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/doneBtn"
+            android:text="Done"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>
