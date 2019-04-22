@@ -55,7 +55,6 @@ public class HomeFragment extends Fragment {
     Assistant service;
     String workspaceId;
     BufferedReader reader;
-    String firstLine;
     List<String> questionsList = new ArrayList<>();
     List<String> answersList = new ArrayList<>();
     List<String> stopWordsList = new ArrayList<>();
@@ -132,17 +131,63 @@ public class HomeFragment extends Fragment {
             }
 
         }
-
+        List<String> clearQuestions = new ArrayList<>();
+        List<String> wordsList =null;
+        //get strings from lit and split it and add it to temp list from words > and loop on it
+        // and compare it with words of stop words list
         for (int i = 0; i < targetQuestionsList.size(); i++) {
+            String question = targetQuestionsList.get(i);
+            wordsList = convertQuestionToWords(question,targetQuestionsList.size());
             for (int j = 0; j < stopWordsList.size(); j++) {
-                if(targetQuestionsList.get(i).equalsIgnoreCase(stopWordsList.get(j))){
-                    String newQuestion = targetQuestionsList.get(i).replaceAll(stopWordsList.get(j),"");
-                    targetQuestionsList.listIterator(i).set(newQuestion);
+                if (wordsList.contains(stopWordsList.get(j))) {
+                    wordsList.remove(stopWordsList.get(j));//remove it
+                }
+            }
+            StringBuilder sb =new StringBuilder();
+            for (int t = 0; t < wordsList.size(); t++) {
+                sb.append(wordsList.get(t)+" ");
+            }
+            clearQuestions.add(sb.toString());
+        }
+
+        /*
+        List<String> wordsList = convertQuestionToWords("",targetQuestionsList.size());
+        for (int i = 0; i < wordsList.size(); i++) {
+            // get the item as string
+            for (int j = 0; j < stopWordsList.size(); j++) {
+                if (stopWordsList.get(j).contains(wordsList.get(i))) {
+                    wordsList.remove(stopWordsList.get(j));
                 }
             }
         }
+*/
 
-        return targetQuestionsList;
+
+
+
+      /*  for (int i = 0; i < targetQuestionsList.size(); i++) {
+            for (int j = 0; j < stopWordsList.size(); j++) {
+                if(targetQuestionsList.get(i).equalsIgnoreCase(stopWordsList.get(j))){
+                    String newQuestion = targetQuestionsList.get(i).replaceAll(stopWordsList.get(j),"");
+                    targetQuestionsList.listIterator(i+1).set(newQuestion);
+                }
+            }
+        }
+*/
+        return clearQuestions;
+    }
+    private List<String> convertQuestionToWords(String question,int size){
+        String[] words = null ;
+        List<String> wordsList = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            String clean = question.trim().replaceAll("\\s+", " ");
+             words = clean.split(" ");
+        }
+        for (String word : words) {
+            wordsList.add(word);
+        }
+
+        return wordsList;
     }
     private void readTextFromFile(String fileTextName){
         InputStream inputStream = null;
@@ -181,13 +226,14 @@ public class HomeFragment extends Fragment {
 
         }
     }
-    private List<Question> createFinalQuestions(List<String> questionsList,List<String> answersList){
+    private List<Question> createQuestionObjects(List<String> questionsList,List<String> answersList,List<String> clearQuestionList){
+        List<Question> list= new ArrayList<>();
         for (int i = 0; i < questionsList.size(); i++) {
-            String [] questionWords =questionsList.get(i).split(" ");
+            String [] questionWords =clearQuestionList.get(i).split(" ");
             ArrayList<String> arrayListOfQuestionWords = new ArrayList<>(Arrays.asList(questionWords));
-            questionObjectsList.add(new Question(arrayListOfQuestionWords,questionsList.get(i),answersList.get(i)));
+            list.add(new Question(arrayListOfQuestionWords,questionsList.get(i),answersList.get(i)));
         }
-        return null;
+        return list;
     }
 
 
@@ -197,7 +243,8 @@ public class HomeFragment extends Fragment {
         connection();
         intentExamplesList = new ArrayList<Example>();
         readTextFromFile("unicodefqa.txt");
-        removeStopWords(questionsList,stopWordsList,"stopwords.txt");
+        List<String> listQ = removeStopWords(questionsList,stopWordsList,"stopwords.txt");
+        /*
         for (int i = 0; i <questionsList.size() ; i++) {
             Log.d("Question : "+i,questionsList.get(i));
         }
@@ -208,9 +255,15 @@ public class HomeFragment extends Fragment {
 //            Log.d("size of list",stopWordsList.size()+"");
             Log.d("stopWord Content",stopWordsList.get(i));
         }
-        for (int i = 0; i < questionsList.size(); i++) {
-            Log.d("Question after remove stop words: "+i,questionsList.get(i));
+        for (int i = 0; i < listQ.size(); i++) {
+            Log.d("Question after remove stop words: "+i,listQ.get(i));
         }
+        for (int i = 0; i < listQ.size(); i++) {
+
+        }
+        */
+
+        questionObjectsList = createQuestionObjects(questionsList,answersList,listQ);
     }
 
     public void connection(){
