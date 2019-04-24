@@ -25,8 +25,16 @@ import android.widget.Toast;
 import com.ibm.cloud.sdk.core.http.Response;
 import com.ibm.cloud.sdk.core.service.security.IamOptions;
 import com.ibm.watson.assistant.v1.Assistant;
+import com.ibm.watson.assistant.v1.model.CreateDialogNodeOptions;
 import com.ibm.watson.assistant.v1.model.CreateIntentOptions;
+import com.ibm.watson.assistant.v1.model.DialogNode;
+import com.ibm.watson.assistant.v1.model.DialogNodeOutput;
+import com.ibm.watson.assistant.v1.model.DialogNodeOutputGeneric;
+import com.ibm.watson.assistant.v1.model.DialogNodeOutputOptionsElement;
+import com.ibm.watson.assistant.v1.model.DialogNodeOutputOptionsElementValue;
+import com.ibm.watson.assistant.v1.model.DialogNodeOutputTextValuesElement;
 import com.ibm.watson.assistant.v1.model.Example;
+import com.ibm.watson.assistant.v1.model.MessageInput;
 import com.ibm.watson.developer_cloud.conversation.v1.model.Intent;
 import com.ibm.watson.developer_cloud.http.ServiceCall;
 
@@ -42,7 +50,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Random;
+import java.util.UUID;
 
 
 public class HomeFragment extends Fragment {
@@ -198,17 +207,17 @@ public class HomeFragment extends Fragment {
             String question;
             //read first line only
             String line = reader.readLine();
-            question = line.trim().substring(2,(line.length()-1)).trim();
+            question = line.trim().substring(3,(line.length()-1)).trim();
             questionsList.add(question);
             while(line != null){
 //                Log.d("Full Line", line);
                 line = reader.readLine();
                 if(line != null){
                     if (line.startsWith("س:")){
-                        question = line.trim().substring(2,(line.length()-1)).trim();
+                        question = line.trim().substring(3,(line.length()-1)).trim();
                         questionsList.add(question);
                     }else if(line.startsWith("ج:")){
-                        String answer = line.trim().substring(2,(line.length()-1)).replaceAll("$","");
+                        String answer = line.trim().substring(2,(line.length()-1)).replaceAll("#","");
                         answersList.add(answer);
                     }
                 }
@@ -255,15 +264,26 @@ public class HomeFragment extends Fragment {
 //            Log.d("size of list",stopWordsList.size()+"");
             Log.d("stopWord Content",stopWordsList.get(i));
         }
+        */
         for (int i = 0; i < listQ.size(); i++) {
             Log.d("Question after remove stop words: "+i,listQ.get(i));
         }
+        /*
         for (int i = 0; i < listQ.size(); i++) {
 
         }
         */
 
         questionObjectsList = createQuestionObjects(questionsList,answersList,listQ);
+//        for (int i = 0; i < questionObjectsList.size(); i++) {
+//            for (int j = 0; j < questionObjectsList.get(1).getListOfWords().size(); j++) {
+//                Log.d("laaal",questionObjectsList.get(1).getListOfWords().get(j));
+//            }
+//        }
+
+        Log.d("asd",UUID.randomUUID().toString());
+
+        String key = "x_"+new Random().nextInt(1000000);
     }
 
     public void connection(){
@@ -272,41 +292,98 @@ public class HomeFragment extends Fragment {
         service.setEndPoint("https://gateway-lon.watsonplatform.net/assistant/api");
         workspaceId = "39e99aca-bd78-4af8-94d7-8f28390371f3";
     }
-    public ServiceCall<com.ibm.watson.developer_cloud.conversation.v1.model.Intent> createIntent(){
-
-
-        String intent_name = intent_name_et.getText().toString();
-
-
-
-        CreateIntentOptions options = new CreateIntentOptions.Builder(workspaceId, intent_name)
-                .examples(intentExamplesList)
-                .description(intent_description_et.getText().toString())
-                .build();
-        Response<com.ibm.watson.assistant.v1.model.Intent> response = service.createIntent(options).execute();
-        return null;
-    }
-    private class createIntentOperation extends AsyncTask<String, Void, String> {
+    private class createIntentAndNodeOperation extends AsyncTask<String, Void, String>{
 
         @Override
-        protected String doInBackground(String... params) {
-            createIntent();
-
-
+        protected String doInBackground(String... strings) {
+            createIntentandNode(questionObjectsList);
             return "Executed";
         }
 
-        @Override
-        protected void onPostExecute(String result) {
-            Toast.makeText(getActivity().getApplicationContext(), "Do in Background", Toast.LENGTH_SHORT).show();
+
+    }
+    public ServiceCall<DialogNode> createDialogNode(String workspaceId,Assistant service,String intent_name,String answer){
+        String random = "X_"+new Random().nextInt(1000000);
+        String dialogNode = random;
+        String conditions = "#"+intent_name;
+        String title =random ;
+        DialogNodeOutput dialogNodeOutput = new DialogNodeOutput();
+        List<DialogNodeOutputGeneric> nodeOutputGenericList = new ArrayList<>();
+        List<DialogNodeOutputTextValuesElement> textValuesElementList = new ArrayList<>();
+        DialogNodeOutputGeneric nodeOutputGeneric = new DialogNodeOutputGeneric();
+        DialogNodeOutputTextValuesElement nodeOutputTextValuesElement = new DialogNodeOutputTextValuesElement();
+        nodeOutputTextValuesElement.setText(answer);
+        nodeOutputGeneric.setResponseType(DialogNodeOutputGeneric.ResponseType.TEXT);
+        textValuesElementList.add(nodeOutputTextValuesElement);
+        nodeOutputGeneric.setValues(textValuesElementList);
+        nodeOutputGenericList.add(nodeOutputGeneric);
+        dialogNodeOutput.setGeneric(nodeOutputGenericList);
+        CreateDialogNodeOptions optionsNode = new CreateDialogNodeOptions.Builder(workspaceId, dialogNode)
+                .conditions(conditions)
+                .title(title)
+                .output(dialogNodeOutput)
+                .build();
+
+        DialogNode responseNode = service.createDialogNode(optionsNode).execute().getResult();
+        return null;
+    }
+    public ServiceCall<com.ibm.watson.developer_cloud.conversation.v1.model.Intent> createIntentandNode(List<Question> list){
+
+
+//        String intent_name = intent_name_et.getText().toString();
+
+        for (int i = 0; i < list.size(); i++) {
+            for (int j = 0; j < list.get(i).getListOfWords().size(); j++) {
+                int found = 0;
+                for (int k = 0; k < intentExamplesList.size(); k++) {
+                    if(intentExamplesList.get(k).text().equalsIgnoreCase(list.get(i).getListOfWords().get(j))){
+                        found++;
+                    }
+                }
+                if(found == 0){
+                    intentExamplesList.add(
+                            new Example.Builder(list.get(i).getListOfWords().get(j)).build()
+                    );
+                }
+
+            }
+            String intent_name = UUID.randomUUID().toString();
+            CreateIntentOptions options = new CreateIntentOptions.Builder(workspaceId, intent_name)
+                    .examples(intentExamplesList)
+                    .build();
+            Response<com.ibm.watson.assistant.v1.model.Intent> response = service.createIntent(options).execute();
+            /////
+            createDialogNode(workspaceId,service,intent_name,list.get(i).getAnswerText());
+            intentExamplesList.clear();
         }
 
-        @Override
-        protected void onPreExecute() {}
-
-        @Override
-        protected void onProgressUpdate(Void... values) {}
+//        CreateIntentOptions options = new CreateIntentOptions.Builder(workspaceId, intent_name)
+//                .examples(intentExamplesList)
+//                .build();
+//        Response<com.ibm.watson.assistant.v1.model.Intent> response = service.createIntent(options).execute();
+        return null;
     }
+//    private class createIntentOperation extends AsyncTask<String, Void, String> {
+//
+//        @Override
+//        protected String doInBackground(String... params) {
+////            createIntent();
+//
+//
+//            return "Executed";
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+////            Toast.makeText(getActivity().getApplicationContext(), "Do in Background", Toast.LENGTH_SHORT).show();
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {}
+//
+//        @Override
+//        protected void onProgressUpdate(Void... values) {}
+//    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -348,14 +425,15 @@ public class HomeFragment extends Fragment {
         addToListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intentExamplesList.add(new Example.Builder(intent_example_et.getText().toString()).build());
-            }
+//                intentExamplesList.add(new Example.Builder(intent_example_et.getText().toString()).build());
+        }
         });
         doneDtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new createIntentOperation().execute("");
-                Toast.makeText(getActivity().getApplicationContext(), "done click", Toast.LENGTH_SHORT).show();
+//                new createIntentOperation().execute("");
+                new createIntentAndNodeOperation().execute("");
+                Toast.makeText(getActivity().getApplicationContext(), "done clicked", Toast.LENGTH_SHORT).show();
             }
         });
 
