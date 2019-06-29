@@ -42,4 +42,5 @@ dependencies {
     }
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.ibm.watson.developer_cloud:java-sdk:6.14.2'
+
 }

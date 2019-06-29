@@ -1,6 +1,5 @@
 package com.example.nadir.finalproject;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,6 +21,7 @@ import android.widget.TextView;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.example.nadir.finalproject.arabicstemmer.ArabicStemmer;
 import com.ibm.cloud.sdk.core.http.Response;
 import com.ibm.cloud.sdk.core.service.security.IamOptions;
 import com.ibm.watson.assistant.v1.Assistant;
@@ -30,20 +30,12 @@ import com.ibm.watson.assistant.v1.model.CreateIntentOptions;
 import com.ibm.watson.assistant.v1.model.DialogNode;
 import com.ibm.watson.assistant.v1.model.DialogNodeOutput;
 import com.ibm.watson.assistant.v1.model.DialogNodeOutputGeneric;
-import com.ibm.watson.assistant.v1.model.DialogNodeOutputOptionsElement;
-import com.ibm.watson.assistant.v1.model.DialogNodeOutputOptionsElementValue;
 import com.ibm.watson.assistant.v1.model.DialogNodeOutputTextValuesElement;
 import com.ibm.watson.assistant.v1.model.Example;
-import com.ibm.watson.assistant.v1.model.MessageInput;
-import com.ibm.watson.developer_cloud.conversation.v1.model.Intent;
 import com.ibm.watson.developer_cloud.http.ServiceCall;
 
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -109,7 +101,7 @@ public class HomeFragment extends Fragment {
         return new String(result, 0, dest_index + 1);
     }
     */
-    private List<String> removeStopWords(List<String> targetQuestionsList,List<String> stopWordsList,String fileStopWordsName){
+    private List<String> removeStopWordsAndStemming(List<String> targetQuestionsList,List<String> stopWordsList,String fileStopWordsName){
         InputStream inputStream = null;
         try {
             inputStream= getActivity().getAssets().open(fileStopWordsName);
@@ -153,8 +145,10 @@ public class HomeFragment extends Fragment {
                 }
             }
             StringBuilder sb =new StringBuilder();
+            String afterStemming ;
             for (int t = 0; t < wordsList.size(); t++) {
-                sb.append(wordsList.get(t)+" ");
+                afterStemming = stemmingWords(wordsList.get(t));
+                sb.append(afterStemming+" ");
             }
             clearQuestions.add(sb.toString());
         }
@@ -252,7 +246,8 @@ public class HomeFragment extends Fragment {
         connection();
         intentExamplesList = new ArrayList<Example>();
         readTextFromFile("unicodefqa.txt");
-        List<String> listQ = removeStopWords(questionsList,stopWordsList,"stopwords.txt");
+        List<String> listQ = removeStopWordsAndStemming(questionsList,stopWordsList, "stopwords.txt");
+//        List<String> listA = stemming(answersList);
         /*
         for (int i = 0; i <questionsList.size() ; i++) {
             Log.d("Question : "+i,questionsList.get(i));
@@ -265,14 +260,15 @@ public class HomeFragment extends Fragment {
             Log.d("stopWord Content",stopWordsList.get(i));
         }
         */
+//        ArabicStemmer stemmer = new ArabicStemmer(getContext().getAssets());
+//////
+//        Log.d("234",stemmer.stemWord("العروبة"));
         for (int i = 0; i < listQ.size(); i++) {
-            Log.d("Question after remove stop words: "+i,listQ.get(i));
-        }
-        /*
-        for (int i = 0; i < listQ.size(); i++) {
+            Log.d("Question after remove stop words and stemming: "+i,listQ.get(i));
 
         }
-        */
+
+
 
         questionObjectsList = createQuestionObjects(questionsList,answersList,listQ);
 //        for (int i = 0; i < questionObjectsList.size(); i++) {
@@ -281,9 +277,34 @@ public class HomeFragment extends Fragment {
 //            }
 //        }
 
-        Log.d("asd",UUID.randomUUID().toString());
+//        Log.d("asd",UUID.randomUUID().toString());
 
         String key = "x_"+new Random().nextInt(1000000);
+    }
+    private List<String> stemming(List<String> targetList){
+        List<String> clearList = new ArrayList<>();
+        List<String> wordsList =null;
+        //get strings from lit and split it and add it to temp list from words > and loop on it
+        // and compare it with words of stop words list
+        for (int i = 0; i < targetList.size(); i++) {
+            String line = targetList.get(i);
+            wordsList = convertQuestionToWords(line,targetList.size());
+
+            StringBuilder sb =new StringBuilder();
+
+            for (int t = 0; t < wordsList.size(); t++) {
+                String afterStemming = stemmingWords(wordsList.get(t));
+                sb.append(afterStemming+" ");
+            }
+            clearList.add(sb.toString());
+        }
+        return  clearList;
+    }
+    private String stemmingWords(String word){
+        ArabicStemmer arabicStemmer = new ArabicStemmer();
+        arabicStemmer.setCurrent(word);
+        arabicStemmer.stem();
+        return arabicStemmer.getCurrent();
     }
 
     public void connection(){
@@ -292,7 +313,7 @@ public class HomeFragment extends Fragment {
         service.setEndPoint("https://gateway-lon.watsonplatform.net/assistant/api");
         workspaceId = "39e99aca-bd78-4af8-94d7-8f28390371f3";
     }
-    private class createIntentAndNodeOperation extends AsyncTask<String, Void, String>{
+    private class CreateIntentAndNodeOperation extends AsyncTask<String, Void, String>{
 
         @Override
         protected String doInBackground(String... strings) {
@@ -300,7 +321,13 @@ public class HomeFragment extends Fragment {
             return "Executed";
         }
 
-
+        @Override
+        protected void onPostExecute(String s) {
+            tellFinishAdd();
+        }
+    }
+    private void tellFinishAdd(){
+        Toast.makeText(getActivity().getApplicationContext(), "Adding intent and nodes finished!", Toast.LENGTH_SHORT).show();
     }
     public ServiceCall<DialogNode> createDialogNode(String workspaceId,Assistant service,String intent_name,String answer){
         String random = "X_"+new Random().nextInt(1000000);
@@ -340,7 +367,7 @@ public class HomeFragment extends Fragment {
                         found++;
                     }
                 }
-                if(found == 0){
+                if(found == 0 && list.get(i).getListOfWords().get(j).length()>0){
                     intentExamplesList.add(
                             new Example.Builder(list.get(i).getListOfWords().get(j)).build()
                     );
@@ -354,7 +381,7 @@ public class HomeFragment extends Fragment {
             Response<com.ibm.watson.assistant.v1.model.Intent> response = service.createIntent(options).execute();
             /////
             createDialogNode(workspaceId,service,intent_name,list.get(i).getAnswerText());
-            intentExamplesList.clear();
+            intentExamplesList.clear(); //to clear intent example list after add words of every question,because every question has def... words
         }
 
 //        CreateIntentOptions options = new CreateIntentOptions.Builder(workspaceId, intent_name)
@@ -432,8 +459,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
 //                new createIntentOperation().execute("");
-                new createIntentAndNodeOperation().execute("");
-                Toast.makeText(getActivity().getApplicationContext(), "done clicked", Toast.LENGTH_SHORT).show();
+                new CreateIntentAndNodeOperation().execute("");
             }
         });
 
