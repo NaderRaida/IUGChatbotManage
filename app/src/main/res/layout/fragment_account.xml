@@ -3,15 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AccountFragment">
+    tools:context=".AboutFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Account"
-        android:textColor="@android:color/holo_blue_dark"
-        android:textSize="20sp"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="هذا التطبيق يوفر لطلاب الجامعةالإسلامية الجدد والقدامى طرح الأسئلة من خلال التطبيق والإجابة على أسئلتهم بشكل فوري."
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="24sp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_margin="10dp"
+        />
 
 
 </FrameLayout>

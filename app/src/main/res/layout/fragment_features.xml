@@ -3,14 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FeaturesFragment">
+    tools:context=".ChatFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="20sp"
-        android:textColor="@android:color/secondary_text_dark_nodisable"
-        android:text="Features" />
+    <Button
+        android:id="@+id/go_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="الإنتقال إلى الشات بوت"
+        android:textSize="17sp"
+        android:background="@drawable/custom_btn"
+        android:textColor="@android:color/white"
+        android:padding="10dp"
+        />
 
 </FrameLayout>

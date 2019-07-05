@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,32 +36,28 @@ public class MainActivity extends AppCompatActivity {
 
 //                    Toast.makeText(MainActivity.this, "home", Toast.LENGTH_SHORT).show();
                     break;
-                case R.id.navigation_account:
+                case R.id.navigation_about:
 //                    mTextMessage.setText(R.string.title_dashboard);
-                    if(getSupportFragmentManager().findFragmentByTag("Account") == null){
-                        selectedFragment = new AccountFragment();
+                    if(getSupportFragmentManager().findFragmentByTag("About") == null){
+                        selectedFragment = new AboutFragment();
                     }else{
-                        selectedFragment = getSupportFragmentManager().findFragmentByTag("Account");
+                        selectedFragment = getSupportFragmentManager().findFragmentByTag("About");
                     }
                     getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.fragment_container,selectedFragment,"Account").addToBackStack("Account").commit();
-//                    Toast.makeText(MainActivity.this, "account", Toast.LENGTH_SHORT).show();
+                            .replace(R.id.fragment_container,selectedFragment,"About").addToBackStack("About").commit();
 
                     break;
-                case R.id.navigation_features:
-                    if(getSupportFragmentManager().findFragmentByTag("Features") == null){
-                        selectedFragment = new FeaturesFragment();
+                case R.id.navigation_chatbot:
+                    if(getSupportFragmentManager().findFragmentByTag("Chatbot") == null){
+                        selectedFragment = new ChatFragment();
                     }else{
-                        selectedFragment = getSupportFragmentManager().findFragmentByTag("Features");
+                        selectedFragment = getSupportFragmentManager().findFragmentByTag("Chatbot");
                     }
                     getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.fragment_container,selectedFragment,"Features").addToBackStack("Features").commit();
+                            .replace(R.id.fragment_container,selectedFragment,"Chatbot").addToBackStack("Chatbot").commit();
 
-//                    Toast.makeText(MainActivity.this, "features", Toast.LENGTH_SHORT).show();
-
-//                    mTextMessage.setText(R.string.title_notifications);
                     break;
 
             }
@@ -75,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
 //        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = findViewById(R.id.navigation);

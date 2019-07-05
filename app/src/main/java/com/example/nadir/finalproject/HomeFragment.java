@@ -8,8 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -50,7 +48,7 @@ public class HomeFragment extends Fragment {
     Spinner spinner;
     TextView intent_name_label,intent_example_label,intent_description_label,node_name_label,node_condition_label,node_title_label,node_output_label;
     EditText intent_name_et,intent_example_et,intent_description_et,node_name_et,node_condition_et,node_title_et,node_output_et;
-    Button addToListBtn,doneDtn;
+    Button addToListBtn, feedButton;
     List<Example> intentExamplesList;
     IamOptions iamOptions;
     Assistant service;
@@ -105,43 +103,32 @@ public class HomeFragment extends Fragment {
         InputStream inputStream = null;
         try {
             inputStream= getActivity().getAssets().open(fileStopWordsName);
-
             reader = new BufferedReader(new InputStreamReader(inputStream));
             String stopWord;
-            //read first line only
-            String line = reader.readLine();
-             stopWord = line.trim();
+            String line = reader.readLine(); stopWord = line.trim();
             stopWordsList.add(stopWord);
             while(line != null){
-//                Log.d("Full Line StopWord", line);
                 line = reader.readLine();
                 if(line != null){
                     stopWord = line;
                     stopWordsList.add(stopWord);
-                }
-            }
-
+                } }
         } catch (IOException e) {
             e.printStackTrace();
-
         }finally {
             try {
                 inputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-
-        }
+            } }
         List<String> clearQuestions = new ArrayList<>();
         List<String> wordsList =null;
-        //get strings from lit and split it and add it to temp list from words > and loop on it
-        // and compare it with words of stop words list
         for (int i = 0; i < targetQuestionsList.size(); i++) {
             String question = targetQuestionsList.get(i);
             wordsList = convertQuestionToWords(question,targetQuestionsList.size());
             for (int j = 0; j < stopWordsList.size(); j++) {
                 if (wordsList.contains(stopWordsList.get(j))) {
-                    wordsList.remove(stopWordsList.get(j));//remove it
+                    wordsList.remove(stopWordsList.get(j));
                 }
             }
             StringBuilder sb =new StringBuilder();
@@ -152,31 +139,6 @@ public class HomeFragment extends Fragment {
             }
             clearQuestions.add(sb.toString());
         }
-
-        /*
-        List<String> wordsList = convertQuestionToWords("",targetQuestionsList.size());
-        for (int i = 0; i < wordsList.size(); i++) {
-            // get the item as string
-            for (int j = 0; j < stopWordsList.size(); j++) {
-                if (stopWordsList.get(j).contains(wordsList.get(i))) {
-                    wordsList.remove(stopWordsList.get(j));
-                }
-            }
-        }
-*/
-
-
-
-
-      /*  for (int i = 0; i < targetQuestionsList.size(); i++) {
-            for (int j = 0; j < stopWordsList.size(); j++) {
-                if(targetQuestionsList.get(i).equalsIgnoreCase(stopWordsList.get(j))){
-                    String newQuestion = targetQuestionsList.get(i).replaceAll(stopWordsList.get(j),"");
-                    targetQuestionsList.listIterator(i+1).set(newQuestion);
-                }
-            }
-        }
-*/
         return clearQuestions;
     }
     private List<String> convertQuestionToWords(String question,int size){
@@ -196,15 +158,12 @@ public class HomeFragment extends Fragment {
         InputStream inputStream = null;
         try {
             inputStream= getActivity().getAssets().open(fileTextName);
-
             reader = new BufferedReader(new InputStreamReader(inputStream));
             String question;
-            //read first line only
             String line = reader.readLine();
             question = line.trim().substring(3,(line.length()-1)).trim();
             questionsList.add(question);
             while(line != null){
-//                Log.d("Full Line", line);
                 line = reader.readLine();
                 if(line != null){
                     if (line.startsWith("س:")){
@@ -216,7 +175,6 @@ public class HomeFragment extends Fragment {
                     }
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
 
@@ -229,7 +187,8 @@ public class HomeFragment extends Fragment {
 
         }
     }
-    private List<Question> createQuestionObjects(List<String> questionsList,List<String> answersList,List<String> clearQuestionList){
+    private List<Question> createQuestionObjects
+            (List<String> questionsList,List<String> answersList,List<String> clearQuestionList){
         List<Question> list= new ArrayList<>();
         for (int i = 0; i < questionsList.size(); i++) {
             String [] questionWords =clearQuestionList.get(i).split(" ");
@@ -243,10 +202,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        connection();
-        intentExamplesList = new ArrayList<Example>();
-        readTextFromFile("unicodefqa.txt");
-        List<String> listQ = removeStopWordsAndStemming(questionsList,stopWordsList, "stopwords.txt");
+
 //        List<String> listA = stemming(answersList);
         /*
         for (int i = 0; i <questionsList.size() ; i++) {
@@ -263,14 +219,10 @@ public class HomeFragment extends Fragment {
 //        ArabicStemmer stemmer = new ArabicStemmer(getContext().getAssets());
 //////
 //        Log.d("234",stemmer.stemWord("العروبة"));
-        for (int i = 0; i < listQ.size(); i++) {
-            Log.d("Question after remove stop words and stemming: "+i,listQ.get(i));
-
-        }
 
 
 
-        questionObjectsList = createQuestionObjects(questionsList,answersList,listQ);
+
 //        for (int i = 0; i < questionObjectsList.size(); i++) {
 //            for (int j = 0; j < questionObjectsList.get(1).getListOfWords().size(); j++) {
 //                Log.d("laaal",questionObjectsList.get(1).getListOfWords().get(j));
@@ -356,9 +308,6 @@ public class HomeFragment extends Fragment {
     }
     public ServiceCall<com.ibm.watson.developer_cloud.conversation.v1.model.Intent> createIntentandNode(List<Question> list){
 
-
-//        String intent_name = intent_name_et.getText().toString();
-
         for (int i = 0; i < list.size(); i++) {
             for (int j = 0; j < list.get(i).getListOfWords().size(); j++) {
                 int found = 0;
@@ -372,50 +321,22 @@ public class HomeFragment extends Fragment {
                             new Example.Builder(list.get(i).getListOfWords().get(j)).build()
                     );
                 }
-
             }
             String intent_name = UUID.randomUUID().toString();
             CreateIntentOptions options = new CreateIntentOptions.Builder(workspaceId, intent_name)
                     .examples(intentExamplesList)
                     .build();
             Response<com.ibm.watson.assistant.v1.model.Intent> response = service.createIntent(options).execute();
-            /////
             createDialogNode(workspaceId,service,intent_name,list.get(i).getAnswerText());
-            intentExamplesList.clear(); //to clear intent example list after add words of every question,because every question has def... words
+            intentExamplesList.clear();
         }
 
-//        CreateIntentOptions options = new CreateIntentOptions.Builder(workspaceId, intent_name)
-//                .examples(intentExamplesList)
-//                .build();
-//        Response<com.ibm.watson.assistant.v1.model.Intent> response = service.createIntent(options).execute();
         return null;
     }
-//    private class createIntentOperation extends AsyncTask<String, Void, String> {
-//
-//        @Override
-//        protected String doInBackground(String... params) {
-////            createIntent();
-//
-//
-//            return "Executed";
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String result) {
-////            Toast.makeText(getActivity().getApplicationContext(), "Do in Background", Toast.LENGTH_SHORT).show();
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {}
-//
-//        @Override
-//        protected void onProgressUpdate(Void... values) {}
-//    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("key",spinner.getSelectedItemPosition());
 
     }
 
@@ -424,119 +345,30 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable  Bundle savedInstanceState) {
 
         View v =  inflater.inflate(R.layout.fragment_home, container, false);
-        spinner =  v.findViewById(R.id.spinner);
-        intent_name_label = v.findViewById(R.id.label_name);
-        intent_example_label = v.findViewById(R.id.label_example);
-        intent_name_et = v.findViewById(R.id.name_et);
-        intent_example_et = v.findViewById(R.id.example_et);
-        intent_description_label = v.findViewById(R.id.label_description);
-        intent_description_et = v.findViewById(R.id.description_et);
-        node_name_label = v.findViewById(R.id.label_name1);
-        node_condition_label = v.findViewById(R.id.label_condition);
-        node_name_et = v.findViewById(R.id.name_et1);
-        node_condition_et = v.findViewById(R.id.condition_et);
-        node_title_label = v.findViewById(R.id.label_title);
-        node_title_et = v.findViewById(R.id.title_et);
-        node_output_label = v.findViewById(R.id.label_output);
-        node_output_et = v.findViewById(R.id.output_et);
-        addToListBtn = v.findViewById(R.id.addToListBtn);
-        doneDtn = v.findViewById(R.id.doneBtn);
-// Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity().getApplicationContext(),
-                R.array.operations, android.R.layout.simple_spinner_item);
-// Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-// Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+        feedButton = v.findViewById(R.id.doneBtn);
 
-        addToListBtn.setOnClickListener(new View.OnClickListener() {
+        feedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                intentExamplesList.add(new Example.Builder(intent_example_et.getText().toString()).build());
-        }
-        });
-        doneDtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                new createIntentOperation().execute("");
-                new CreateIntentAndNodeOperation().execute("");
-            }
-        });
+                Toast.makeText(getActivity().getApplicationContext(), "Adding intent and nodes finished!", Toast.LENGTH_SHORT).show();
+                    connection();
+                    intentExamplesList = new ArrayList<Example>();
+                    readTextFromFile("unicodefqa.txt");
+                    List<String> listQ = removeStopWordsAndStemming(questionsList,stopWordsList, "stopwords.txt");
+//                    for (int i = 0; i < listQ.size(); i++) {
+//                        Log.d("Question after remove stop words and stemming: "+i,listQ.get(i));
+//
+//                    }
+                    questionObjectsList = createQuestionObjects(questionsList,answersList,listQ);
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch(position){
-                    case 0 :
-                        showIntentsOptions();
-                        break;
-                    case 1:
-                        showEntitiesOptions();
-                        break;
-                    case 2:
-                        showDialogOptions();
-                        break;
-                }
-            }
+                    new CreateIntentAndNodeOperation().execute("");
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
+
         return v;
 
-    }
-    public void intentOperations(){
-
-    }
-    public void showIntentsOptions(){
-        intent_name_et.setVisibility(View.VISIBLE);
-        intent_name_label.setVisibility(View.VISIBLE);
-        intent_example_et.setVisibility(View.VISIBLE);
-        intent_example_label.setVisibility(View.VISIBLE);
-        intent_description_label.setVisibility(View.VISIBLE);
-        intent_description_et.setVisibility(View.VISIBLE);
-        node_name_et.setVisibility(View.GONE);
-        node_name_label.setVisibility(View.GONE);
-        node_condition_et.setVisibility(View.GONE);
-        node_condition_label.setVisibility(View.GONE);
-        node_title_label.setVisibility(View.GONE);
-        node_title_et.setVisibility(View.GONE);
-        node_output_label.setVisibility(View.GONE);
-        node_output_et.setVisibility(View.GONE);
-    }
-    public void showDialogOptions(){
-        intent_name_et.setVisibility(View.GONE);
-        intent_name_label.setVisibility(View.GONE);
-        intent_example_et.setVisibility(View.GONE);
-        intent_example_label.setVisibility(View.GONE);
-        intent_description_label.setVisibility(View.GONE);
-        intent_description_et.setVisibility(View.GONE);
-        node_name_et.setVisibility(View.VISIBLE);
-        node_name_label.setVisibility(View.VISIBLE);
-        node_condition_et.setVisibility(View.VISIBLE);
-        node_condition_label.setVisibility(View.VISIBLE);
-        node_title_label.setVisibility(View.VISIBLE);
-        node_title_et.setVisibility(View.VISIBLE);
-        node_output_label.setVisibility(View.VISIBLE);
-        node_output_et.setVisibility(View.VISIBLE);
-    }
-    public void showEntitiesOptions(){
-        intent_name_et.setVisibility(View.GONE);
-        intent_name_label.setVisibility(View.GONE);
-        intent_example_et.setVisibility(View.GONE);
-        intent_example_label.setVisibility(View.GONE);
-        intent_description_label.setVisibility(View.GONE);
-        intent_description_et.setVisibility(View.GONE);
-        node_name_et.setVisibility(View.GONE);
-        node_name_label.setVisibility(View.GONE);
-        node_condition_et.setVisibility(View.GONE);
-        node_condition_label.setVisibility(View.GONE);
-        node_title_label.setVisibility(View.GONE);
-        node_title_et.setVisibility(View.GONE);
-        node_output_label.setVisibility(View.GONE);
-        node_output_et.setVisibility(View.GONE);
     }
 
 
