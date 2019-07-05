@@ -4,21 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
-
-///////////////////////////
-
-
 import android.os.AsyncTask;
 import android.widget.Toast;
-
 import com.example.nadir.finalproject.arabicstemmer.ArabicStemmer;
 import com.ibm.cloud.sdk.core.http.Response;
 import com.ibm.cloud.sdk.core.service.security.IamOptions;
@@ -31,8 +22,6 @@ import com.ibm.watson.assistant.v1.model.DialogNodeOutputGeneric;
 import com.ibm.watson.assistant.v1.model.DialogNodeOutputTextValuesElement;
 import com.ibm.watson.assistant.v1.model.Example;
 import com.ibm.watson.developer_cloud.http.ServiceCall;
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
