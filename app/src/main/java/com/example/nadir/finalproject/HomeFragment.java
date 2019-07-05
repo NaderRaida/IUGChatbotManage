@@ -45,10 +45,7 @@ import java.util.UUID;
 
 
 public class HomeFragment extends Fragment {
-    Spinner spinner;
-    TextView intent_name_label,intent_example_label,intent_description_label,node_name_label,node_condition_label,node_title_label,node_output_label;
-    EditText intent_name_et,intent_example_et,intent_description_et,node_name_et,node_condition_et,node_title_et,node_output_et;
-    Button addToListBtn, feedButton;
+    Button feedButton;
     List<Example> intentExamplesList;
     IamOptions iamOptions;
     Assistant service;
@@ -58,47 +55,6 @@ public class HomeFragment extends Fragment {
     List<String> answersList = new ArrayList<>();
     List<String> stopWordsList = new ArrayList<>();
     List<Question> questionObjectsList = new ArrayList<>();
-
-    /*public static int isSubstring(String str, String pattern)
-    {
-        int str_length = str.length();
-        int pattern_length = pattern.length();
-
-        for (int i = 0; i <= str_length - pattern_length; i++)
-        {
-            int j;
-
-            for (j = 0; j < pattern_length; j++)
-                if (str.charAt(i + j) != pattern.charAt(j))
-                    break;
-
-            if (j == pattern_length)
-                return i;
-        }
-        return -1;
-    }
-    public  String deleteAll(String str, String pattern)
-    {
-        for(int index = isSubstring(str, pattern); index != -1; index = isSubstring(str, pattern))
-            str = deleteSubstring(str, pattern, index);
-
-        return str;
-    }
-    public static String deleteSubstring(String str, String pattern, int index)
-    {
-        int start_index = index;
-        int end_index = start_index + pattern.length() - 1;
-        int dest_index = 0;
-        char[] result = new char[str.length()];
-
-
-        for(int i = 0; i< str.length() - 1; i++)
-            if(i < start_index || i > end_index)
-                result[dest_index++] = str.charAt(i);
-
-        return new String(result, 0, dest_index + 1);
-    }
-    */
     private List<String> removeStopWordsAndStemming(List<String> targetQuestionsList,List<String> stopWordsList,String fileStopWordsName){
         InputStream inputStream = null;
         try {
@@ -198,46 +154,9 @@ public class HomeFragment extends Fragment {
         return list;
     }
 
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-//        List<String> listA = stemming(answersList);
-        /*
-        for (int i = 0; i <questionsList.size() ; i++) {
-            Log.d("Question : "+i,questionsList.get(i));
-        }
-        for (int i = 0; i <answersList.size() ; i++) {
-            Log.d("Answer : "+i,answersList.get(i));
-        }
-        for (int i = 0; i < stopWordsList.size(); i++) {
-//            Log.d("size of list",stopWordsList.size()+"");
-            Log.d("stopWord Content",stopWordsList.get(i));
-        }
-        */
-//        ArabicStemmer stemmer = new ArabicStemmer(getContext().getAssets());
-//////
-//        Log.d("234",stemmer.stemWord("العروبة"));
-
-
-
-
-//        for (int i = 0; i < questionObjectsList.size(); i++) {
-//            for (int j = 0; j < questionObjectsList.get(1).getListOfWords().size(); j++) {
-//                Log.d("laaal",questionObjectsList.get(1).getListOfWords().get(j));
-//            }
-//        }
-
-//        Log.d("asd",UUID.randomUUID().toString());
-
-        String key = "x_"+new Random().nextInt(1000000);
-    }
     private List<String> stemming(List<String> targetList){
         List<String> clearList = new ArrayList<>();
         List<String> wordsList =null;
-        //get strings from lit and split it and add it to temp list from words > and loop on it
-        // and compare it with words of stop words list
         for (int i = 0; i < targetList.size(); i++) {
             String line = targetList.get(i);
             wordsList = convertQuestionToWords(line,targetList.size());
@@ -350,15 +269,10 @@ public class HomeFragment extends Fragment {
         feedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity().getApplicationContext(), "Adding intent and nodes finished!", Toast.LENGTH_SHORT).show();
                     connection();
                     intentExamplesList = new ArrayList<Example>();
                     readTextFromFile("unicodefqa.txt");
                     List<String> listQ = removeStopWordsAndStemming(questionsList,stopWordsList, "stopwords.txt");
-//                    for (int i = 0; i < listQ.size(); i++) {
-//                        Log.d("Question after remove stop words and stemming: "+i,listQ.get(i));
-//
-//                    }
                     questionObjectsList = createQuestionObjects(questionsList,answersList,listQ);
 
                     new CreateIntentAndNodeOperation().execute("");
