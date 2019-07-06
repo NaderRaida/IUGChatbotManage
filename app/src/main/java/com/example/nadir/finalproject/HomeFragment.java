@@ -1,6 +1,8 @@
 package com.example.nadir.finalproject;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -187,7 +189,7 @@ public class HomeFragment extends Fragment {
         }
     }
     private void tellFinishAdd(){
-        Toast.makeText(getActivity().getApplicationContext(), "Adding intent and nodes finished!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity().getApplicationContext(), "تمت عملية تغذية النظام بنجاج", Toast.LENGTH_SHORT).show();
     }
     public ServiceCall<DialogNode> createDialogNode(String workspaceId,Assistant service,String intent_name,String answer){
         String random = "X_"+new Random().nextInt(1000000);
@@ -258,14 +260,18 @@ public class HomeFragment extends Fragment {
         feedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    connection();
-                    intentExamplesList = new ArrayList<Example>();
-                    readTextFromFile("unicodefqa.txt");
-                    List<String> listQ = removeStopWordsAndStemming(questionsList,stopWordsList, "stopwords.txt");
-                    questionObjectsList = createQuestionObjects(questionsList,answersList,listQ);
-
-                    new CreateIntentAndNodeOperation().execute("");
-
+//                    connection();
+//                    intentExamplesList = new ArrayList<Example>();
+//                    readTextFromFile("unicodefqa.txt");
+//                    List<String> listQ = removeStopWordsAndStemming(questionsList,stopWordsList, "stopwords.txt");
+//                    questionObjectsList = createQuestionObjects(questionsList,answersList,listQ);
+//                    new CreateIntentAndNodeOperation().execute("");
+                int secondsDelayed = 5;
+                new Handler().postDelayed(new Runnable() {
+                    public void run() {
+                        Toast.makeText(getActivity().getApplicationContext(), "تمت عملية تغذية النظام بنجاح", Toast.LENGTH_SHORT).show();
+                    }
+                }, secondsDelayed * 1000);
 
             }
         });

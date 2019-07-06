@@ -1,15 +1,20 @@
 package com.example.nadir.finalproject;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     Fragment selectedFragment =null;
+    BottomNavigationView navigation;
+
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -27,8 +32,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.fragment_container,selectedFragment,"Home").addToBackStack("Home").commit();
-
+                            .replace(R.id.fragment_container,selectedFragment,"Home").commit();
                     break;
                 case R.id.navigation_about:
                     if(getSupportFragmentManager().findFragmentByTag("About") == null){
@@ -38,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.fragment_container,selectedFragment,"About").addToBackStack("About").commit();
-
+                            .replace(R.id.fragment_container,selectedFragment,"About").commit();
                     break;
                 case R.id.navigation_chatbot:
                     if(getSupportFragmentManager().findFragmentByTag("Chatbot") == null){
@@ -49,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.fragment_container,selectedFragment,"Chatbot").addToBackStack("Chatbot").commit();
-
+                            .replace(R.id.fragment_container,selectedFragment,"Chatbot").commit();
                     break;
 
             }
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        BottomNavigationView navigation = findViewById(R.id.navigation);
+         navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,
@@ -73,4 +75,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        String fragment_name = getSupportFragmentManager().getBackStackEntryAt((getSupportFragmentManager().getBackStackEntryCount())-1).getName();
+//        if (fragment_name.equals("Home")){
+//        navigation.setSelectedItemId(R.id.navigation_home);
+//        }else if(fragment_name.equals("About")){
+//            navigation.setSelectedItemId(R.id.navigation_about);
+//        }else if(fragment_name.equals("Chatbot")){
+//            navigation.setSelectedItemId(R.id.navigation_chatbot);
+//        }
+//
+//    }
 }
