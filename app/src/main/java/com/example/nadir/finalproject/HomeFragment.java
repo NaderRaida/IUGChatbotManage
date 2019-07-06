@@ -260,19 +260,12 @@ public class HomeFragment extends Fragment {
         feedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                    connection();
-//                    intentExamplesList = new ArrayList<Example>();
-//                    readTextFromFile("unicodefqa.txt");
-//                    List<String> listQ = removeStopWordsAndStemming(questionsList,stopWordsList, "stopwords.txt");
-//                    questionObjectsList = createQuestionObjects(questionsList,answersList,listQ);
-//                    new CreateIntentAndNodeOperation().execute("");
-                int secondsDelayed = 5;
-                new Handler().postDelayed(new Runnable() {
-                    public void run() {
-                        Toast.makeText(getActivity().getApplicationContext(), "تمت عملية تغذية النظام بنجاح", Toast.LENGTH_SHORT).show();
-                    }
-                }, secondsDelayed * 1000);
-
+                    connection();
+                    intentExamplesList = new ArrayList<Example>();
+                    readTextFromFile("unicodefqa.txt");
+                    List<String> listQ = removeStopWordsAndStemming(questionsList,stopWordsList, "stopwords.txt");
+                    questionObjectsList = createQuestionObjects(questionsList,answersList,listQ);
+                    new CreateIntentAndNodeOperation().execute("");
             }
         });
 
